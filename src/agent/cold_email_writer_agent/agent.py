@@ -1,11 +1,13 @@
 from pydantic_ai import Agent
+import logging
 
-from agent.cold_email_writer_agent.model import (
+from src.agent.cold_email_writer_agent.model import (
     ColdEmailWriterAgentInput,
     ColdEmailWriterAgentResponse,
 )
-from agent.job_description_parser_agent.model import JobDescriptionAgentResult
+from src.agent.job_description_parser_agent.model import JobDescriptionAgentResult
 
+logger = logging.getLogger(__name__)
 
 cold_email_writer_agent = Agent(
     model="groq:llama-3.2-3b-preview",
@@ -26,10 +28,30 @@ Keep tone professional yet conversational. Focus on Turing's talent pool and pro
 """,
 )
 
-async def run_cold_email_writer(job_description:JobDescriptionAgentResult):
-    result=await cold_email_writer_agent.run(
-        "Please write a cold email",
-        deps=ColdEmailWriterAgentInput(job_description=job_description),
-    )
+async def run_cold_email_writer(job_description: JobDescriptionAgentResult) -> dict:
+    """Generate a cold email based on the job description"""
+    try:
+        result = await cold_email_writer_agent.run(
+            "Please write a cold email",
+            deps=ColdEmailWriterAgentInput(job_description=job_description),
+        )
 
-    return result.data()
+        if hasattr(result, 'data') and result.data:
+            # Convert the ColdEmailWriterAgentResponse to a dict
+            return {
+                "subject": result.data.subject,
+                "body": result.data.body
+            }
+        
+        logger.error("No data received from cold email writer agent")
+        return {
+            "subject": "",
+            "body": ""
+        }
+
+    except Exception as e:
+        logger.error(f"Error in cold email writer: {str(e)}")
+        return {
+            "subject": "",
+            "body": ""
+        }

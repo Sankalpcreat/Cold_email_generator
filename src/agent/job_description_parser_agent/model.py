@@ -16,15 +16,22 @@ class JobDescriptionAgentDependecies:
 
 class JobDescriptionAgentResult(BaseModel):
     role: str = Field(
-        description="The job title or role position being described (e.g., 'Senior Software Engineer', 'Product Manager')"
+        description="The job title or role position being described",
+        default=""
     )
-    company_name: str = Field(description="The Company which posted job")
+    company_name: str = Field(
+        description="The Company which posted job",
+        default=""
+    )
     experience: str = Field(
-        description="Required years and type of experience for the position (e.g., '5+ years of software development')"
+        description="Required years and type of experience for the position",
+        default=""
     )
     skills: List[str] = Field(
-        description="List of specific technical skills, tools, or competencies required for the role (e.g., ['Python', 'AWS', 'Machine Learning'])"
+        description="List of specific technical skills required for the role",
+        default_factory=list
     )
     description: str = Field(
-        description="Detailed overview of the job responsibilities, requirements, and expectations"
+        description="Detailed overview of the job responsibilities",
+        default=""
     )

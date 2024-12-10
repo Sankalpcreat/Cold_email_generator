@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from agent.job_description_parser_agent.model import JobDescriptionAgentResult
+from src.agent.job_description_parser_agent.model import JobDescriptionAgentResult
 
 
 class ColdEmailWriterAgentInput(BaseModel):
