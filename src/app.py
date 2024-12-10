@@ -1,20 +1,23 @@
-from config import Config
-import gradio as gr
+from fastapi import FastAPI
+from pydantic import BaseModel
+from agent.cold_email_writer_agent.agent import run_cold_email_writer
+from agent.job_description_parser_agent.agent import run_job_description_parser
 
-from agent.agent import entrypoint
+app = FastAPI()
 
-config = Config.load_config()
+class JobDescriptionRequest(BaseModel):
+    job_url: str
 
+class ColdEmailRequest(BaseModel):
+    job_url: str
 
-interface = gr.Interface(
-    fn=entrypoint,
-    inputs=gr.Textbox(
-        lines=1,
-        placeholder="Enter the job posting url here...",
-        label="Job Posting URL",
-    ),
-    outputs=gr.Textbox(lines=15, label="Generated Cold Email"),
-)
+@app.post("/job-description-parser")
+async def parse_job_description(request: JobDescriptionRequest):
+    job_description = await run_job_description_parser(job_posting_url=request.job_url)
+    return job_description
 
-if __name__ == "__main__":
-    interface.queue().launch()
+@app.post("/cold-email-generator")
+async def generate_cold_email(request: ColdEmailRequest):
+    job_description = await run_job_description_parser(job_posting_url=request.job_url)
+    cold_email = await run_cold_email_writer(job_description=job_description)
+    return cold_email
