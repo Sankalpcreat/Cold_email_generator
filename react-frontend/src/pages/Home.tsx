@@ -47,17 +47,19 @@ const Home: React.FC = () => {
                             </CardContent>
                         </Card>
                     ) : (
-                        <div className="space-y-6">
+                        <div className="grid grid-cols-1 gap-6">
                             {jobDescription && (
                                 <OutputCard
                                     title="Job Description Analysis"
                                     content={jobDescription}
+                                    className="flex flex-col"
                                 />
                             )}
                             {coldEmail && (
                                 <OutputCard
                                     title="Generated Cold Email"
                                     content={coldEmail}
+                                    className="flex flex-col"
                                 />
                             )}
                         </div>
