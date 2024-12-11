@@ -29,7 +29,7 @@ Keep tone professional yet conversational. Focus on Turing's talent pool and pro
 )
 
 async def run_cold_email_writer(job_description: JobDescriptionAgentResult) -> dict:
-    """Generate a cold email based on the job description"""
+    
     try:
         result = await cold_email_writer_agent.run(
             "Please write a cold email",
@@ -37,7 +37,7 @@ async def run_cold_email_writer(job_description: JobDescriptionAgentResult) -> d
         )
 
         if hasattr(result, 'data') and result.data:
-            # Convert the ColdEmailWriterAgentResponse to a dict
+            
             return {
                 "subject": result.data.subject,
                 "body": result.data.body

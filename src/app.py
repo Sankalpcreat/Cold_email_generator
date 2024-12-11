@@ -10,27 +10,25 @@ logging.basicConfig(level=logging.INFO)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Frontend origin
+    allow_origins=["http://localhost:5173"],  
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"], 
+    allow_headers=["*"], 
 )
-# Request models with validation
+
 class JobDescriptionRequest(BaseModel):
-    job_url: HttpUrl  # Validates URL format
+    job_url: HttpUrl  
 
 class ColdEmailRequest(BaseModel):
-    job_url: HttpUrl  # Validates URL format
+    job_url: HttpUrl  
 
 @app.post("/job-description-parser")
 async def parse_job_description(request: JobDescriptionRequest):
-    """
-    Endpoint to parse a job description from a given job posting URL.
-    """
+   
     try:
         job_description = await run_job_description_parser(job_posting_url=request.job_url)
         
-        # Validate the response
+    
         if not job_description or not any([
             job_description.role,
             job_description.company_name,
@@ -53,17 +51,15 @@ async def parse_job_description(request: JobDescriptionRequest):
 
 @app.post("/cold-email-generator")
 async def generate_cold_email(request: ColdEmailRequest):
-    """
-    Endpoint to generate a cold email based on a job posting URL.
-    """
+   
     try:
         logging.info(f"Received request for cold email generation: {request.job_url}")
 
-        # Get job description
+        
         job_description = await run_job_description_parser(job_posting_url=request.job_url)
         logging.info(f"Parsed job description: {job_description}")
 
-        # Validate job description
+       
         if not job_description or not any([
             job_description.role,
             job_description.company_name,
@@ -75,7 +71,7 @@ async def generate_cold_email(request: ColdEmailRequest):
                 detail="Could not extract valid job description from the provided URL"
             )
 
-        # Generate cold email
+        
         cold_email = await run_cold_email_writer(job_description=job_description)
         logging.info(f"Generated cold email: {cold_email}")
 

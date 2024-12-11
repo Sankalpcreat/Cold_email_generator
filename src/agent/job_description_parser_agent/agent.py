@@ -29,9 +29,7 @@ Format your response as a clean JSON object with these fields only. Do not dupli
 
 @job_description_parser_agent.tool
 def get_job_details(ctx: RunContext[JobInformationFetchDeps]) -> Dict[str, Any]:
-    """
-    Retrieves and extracts job posting information
-    """
+    
     try:
         job_post_url = ctx.deps.job_post_url
         job_posting_information = scrape_website(url=job_post_url)
@@ -46,18 +44,18 @@ def get_job_details(ctx: RunContext[JobInformationFetchDeps]) -> Dict[str, Any]:
         }
 
 def clean_llm_response(response_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Clean and validate LLM response data"""
+    
     cleaned_data = {
         "role": str(response_data.get("role", "")),
         "company_name": str(response_data.get("company_name", "")),
         "experience": str(response_data.get("experience", "")),
-        "skills": list(set(response_data.get("skills", []))),  # Remove duplicates
+        "skills": list(set(response_data.get("skills", []))), 
         "description": str(response_data.get("description", ""))
     }
     return cleaned_data
 
 async def run_job_description_parser(job_posting_url: str) -> JobDescriptionAgentResult:
-    """Parse job description from URL"""
+
     try:
         result = await job_description_parser_agent.run(
             "Please analyze the job posting and extract the required information into a single, clean JSON structure.",
@@ -65,7 +63,7 @@ async def run_job_description_parser(job_posting_url: str) -> JobDescriptionAgen
         )
         
         if hasattr(result, 'data') and result.data:
-            # Clean the response data
+            
             if isinstance(result.data, dict):
                 cleaned_data = clean_llm_response(result.data)
             elif isinstance(result.data, JobDescriptionAgentResult):
